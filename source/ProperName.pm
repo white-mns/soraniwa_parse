@@ -66,18 +66,10 @@ sub Init{
     $header_list = [
                 "skill_id",
                 "name",
-                "at",
-                "ct",
-                "timing_id",
-                "mp",
-                "target_id",
-                "range",
-                "property_id",
-                "element_id",
                 "text",
     ];
     $output_file = "./output/data/". "skill_data" . ".csv";
-    $self->{DataHandlers}{SkillData}->Init($header_list, $output_file, [" ", -1, -1, 0, -1, 0, -1, -1, -1, ""]);
+    $self->{DataHandlers}{SkillData}->Init($header_list, $output_file, [" ", ""]);
 
     return;
 }

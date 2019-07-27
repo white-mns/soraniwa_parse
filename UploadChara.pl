@@ -42,7 +42,7 @@ sub Main {
 
     if (ConstData::EXE_DATA) {
         &UploadData($upload, ConstData::EXE_DATA_PROPER_NAME,     "proper_names",     "./output/data/proper_name.csv");
-        &UploadData($upload, $date, ConstData::EXE_CHARA_NAME,              "names",             "./output/chara/name_");
+        &UploadData($upload, ConstData::EXE_CHARA_NAME,    "names",            "./output/chara/name.csv");
     }
     if (ConstData::EXE_CHARA) {
         #&UploadResult($upload, $date, ConstData::EXE_CHARA_NAME,              "names",             "./output/chara/name_");

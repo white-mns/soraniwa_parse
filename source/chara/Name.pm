@@ -35,24 +35,21 @@ sub new {
 #-----------------------------------#
 sub Init{
     my $self = shift;
-    ($self->{ResultNo}, $self->{GenerateNo}, $self->{CommonDatas}) = @_;
+    ($self->{Date}, $self->{CommonDatas}) = @_;
     
     #初期化
     $self->{Datas}{Data}  = StoreData->new();
     my $header_list = "";
    
     $header_list = [
-                "result_no",
-                "generate_no",
                 "e_no",
-                "sub_no",
                 "name",
     ];
 
     $self->{Datas}{Data}->Init($header_list);
     
     #出力ファイル設定
-    $self->{Datas}{Data}->SetOutputName( "./output/chara/name_" . $self->{ResultNo} . "_" . $self->{GenerateNo} . ".csv" );
+    $self->{Datas}{Data}->SetOutputName( "./output/chara/name.csv" );
     return;
 }
 
@@ -64,13 +61,11 @@ sub Init{
 sub GetData{
     my $self    = shift;
     my $e_no    = shift;
-    my $sub_no  = shift;
-    my $stat_table_node = shift;
+    my $div_inner_boardclip_node = shift;
     
     $self->{ENo} = $e_no;
-    $self->{SubNo} = $sub_no;
 
-    $self->GetNameData($stat_table_node);
+    $self->GetNameData($div_inner_boardclip_node);
     
     return;
 }
@@ -81,15 +76,12 @@ sub GetData{
 #-----------------------------------#
 sub GetNameData{
     my $self  = shift;
-    my $stat_table_node = shift;
+    my $div_inner_boardclip_node = shift;
     my $name = "";
  
-    my $sttitle_nodes  = &GetNode::GetNode_Tag_Attr("td", "class", "sttitle", \$stat_table_node);
-    my $b_nodes        = &GetNode::GetNode_Tag("b", \$$sttitle_nodes[0]);
+    $name = $div_inner_boardclip_node->as_text;
 
-    $name = $$b_nodes[0]->as_text;
-
-    $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ResultNo}, $self->{GenerateNo}, $self->{ENo}, $self->{SubNo}, $name) ));
+    $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ENo}, $name) ));
 
     return;
 }

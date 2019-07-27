@@ -88,7 +88,7 @@ sub Execute{
     for (my $e_no=$start; $e_no<=$end; $e_no++) {
         if ($e_no % 10 == 0) {print $e_no . "\n"};
 
-        $self->ParsePage($directory."/status".$e_no.".html.gz",$e_no ,0);
+        $self->ParsePage($directory."/".$e_no.".html.gz",$e_no ,0);
     }
     
     return ;
@@ -115,12 +115,12 @@ sub ParsePage{
     my $tree = HTML::TreeBuilder->new;
     $tree->parse($content);
 
-    my $stat_table_nodes  = &GetNode::GetNode_Tag_Attr("table", "class", "stat",  \$tree);
+    my $div_inner_boardclip_nodes  = &GetNode::GetNode_Tag_Attr("div", "class", "inner_boardclip",  \$tree);
     
-    if (!scalar(@$stat_table_nodes)) {return;}
+    if (!scalar(@$div_inner_boardclip_nodes)) {return;}
     
     # データリスト取得
-    #if (exists($self->{DataHandlers}{Name}))           {$self->{DataHandlers}{Name}->GetData          ($e_no, $f_no, $$stat_table_nodes[0])};
+    if (exists($self->{DataHandlers}{Name})) {$self->{DataHandlers}{Name}->GetData($e_no, $$div_inner_boardclip_nodes[0])};
 
     $tree = $tree->delete;
 }

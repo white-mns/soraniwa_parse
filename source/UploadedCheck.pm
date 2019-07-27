@@ -35,21 +35,20 @@ sub new {
 #-----------------------------------#
 sub Init{
     my $self = shift;
-    ($self->{ResultNo}, $self->{GenerateNo}, $self->{CommonDatas}) = @_;
+    ($self->{Date}, $self->{CommonDatas}) = @_;
     
     #初期化
     $self->{Datas}{Data}  = StoreData->new();
     my $header_list = "";
    
     $header_list = [
-                "result_no",
-                "generate_no",
+                "created_at",
     ];
 
     $self->{Datas}{Data}->Init($header_list);
     
     #出力ファイル設定
-    $self->{Datas}{Data}->SetOutputName( "./output/etc/uploaded_check_" . $self->{ResultNo} . "_" . $self->{GenerateNo} . ".csv" );
+    $self->{Datas}{Data}->SetOutputName( "./output/etc/uploaded_check_" . $self->{Date} . ".csv" );
     return;
 }
 
@@ -61,7 +60,7 @@ sub Init{
 sub Execute{
     my $self    = shift;
     
-    $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ResultNo}, $self->{GenerateNo}) ));
+    $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{Date}) ));
 
     return;
 }
