@@ -41,15 +41,17 @@ sub new {
 #-----------------------------------#
 sub Init{
     my $self = shift;
-    ($self->{ResultNo}, $self->{GenerateNo}, $self->{CommonDatas}) = @_;
+    ($self->{Date}, $self->{CommonDatas}) = @_;
 
     #インスタンス作成
     $self->{DataHandlers}{ProperName} = StoreProperName->new();
     $self->{DataHandlers}{SkillData}  = StoreProperData->new();
+    $self->{DataHandlers}{TypeName}   = StoreProperName->new();
 
     #他パッケージへの引き渡し用インスタンス
     $self->{CommonDatas}{ProperName} = $self->{DataHandlers}{ProperName};
     $self->{CommonDatas}{SkillData}  = $self->{DataHandlers}{SkillData};
+    $self->{CommonDatas}{TypeName}   = $self->{DataHandlers}{TypeName};
 
     my $header_list = "";
     my $output_file = "";
@@ -62,14 +64,23 @@ sub Init{
     $output_file = "./output/data/". "proper_name" . ".csv";
     $self->{DataHandlers}{ProperName}->Init($header_list, $output_file," ");
 
+    # タイプ情報の初期化
+    $header_list = [
+                "type_id",
+                "name",
+    ];
+    $output_file = "./output/data/". "type_name" . ".csv";
+    $self->{DataHandlers}{TypeName}->Init($header_list, $output_file, " ");
+
     # 技情報の初期化
     $header_list = [
                 "skill_id",
                 "name",
+                "cost_id",
                 "text",
     ];
     $output_file = "./output/data/". "skill_data" . ".csv";
-    $self->{DataHandlers}{SkillData}->Init($header_list, $output_file, [" ", ""]);
+    $self->{DataHandlers}{SkillData}->Init($header_list, $output_file, [" ", 0, ""]);
 
     return;
 }

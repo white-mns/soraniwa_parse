@@ -18,6 +18,8 @@ require "./source/lib/IO.pm";
 require "./source/lib/time.pm";
 
 require "./source/chara/Name.pm";
+require "./source/chara/Status.pm";
+require "./source/chara/Skill.pm";
 
 use ConstData;        #定数呼び出し
 
@@ -47,7 +49,9 @@ sub Init{
     ($self->{Date}, $self->{CommonDatas}) = @_;
 
     #インスタンス作成
-    if (ConstData::EXE_CHARA_NAME)           { $self->{DataHandlers}{Name}           = Name->new();}
+    if (ConstData::EXE_CHARA_NAME)   { $self->{DataHandlers}{Name}   = Name->new();}
+    if (ConstData::EXE_CHARA_STATUS) { $self->{DataHandlers}{Status} = Status->new();}
+    if (ConstData::EXE_CHARA_SKILL)  { $self->{DataHandlers}{Skill}  = Skill->new();}
 
     #初期化処理
     foreach my $object( values %{ $self->{DataHandlers} } ) {
@@ -116,11 +120,14 @@ sub ParsePage{
     $tree->parse($content);
 
     my $div_inner_boardclip_nodes  = &GetNode::GetNode_Tag_Attr("div", "class", "inner_boardclip",  \$tree);
+    my $div_cdatal_nodes           = &GetNode::GetNode_Tag_Attr("div", "class", "cdatal",  \$tree);
     
     if (!scalar(@$div_inner_boardclip_nodes)) {return;}
     
     # データリスト取得
-    if (exists($self->{DataHandlers}{Name})) {$self->{DataHandlers}{Name}->GetData($e_no, $$div_inner_boardclip_nodes[0])};
+    if (exists($self->{DataHandlers}{Name}))   {$self->{DataHandlers}{Name}->GetData  ($e_no, $$div_inner_boardclip_nodes[0])};
+    if (exists($self->{DataHandlers}{Status})) {$self->{DataHandlers}{Status}->GetData($e_no, $$div_cdatal_nodes[1])};
+    if (exists($self->{DataHandlers}{Skill}))  {$self->{DataHandlers}{Skill}->GetData ($e_no, $$div_cdatal_nodes[1])};
 
     $tree = $tree->delete;
 }

@@ -80,6 +80,7 @@ sub GetNameData{
     my $name = "";
  
     $name = $div_inner_boardclip_node->as_text;
+    $name =~ s/ENo.\d+　//g;
 
     $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ENo}, $name) ));
 
