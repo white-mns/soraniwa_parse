@@ -88,7 +88,7 @@ sub GetSkillData{
     my $span_marks_marki0_nodes = &GetNode::GetNode_Tag_Attr("span", "class", "marks marki0",  \$div_cdatal_node);
     
     foreach my $node (@$span_marks_marki0_nodes) {
-        my ($set_no, $skill_type_id, $type_id, $nature_id, $skill_id, $name, $timing_id) = (0, 0, 0, 0, 0, "", 0);
+        my ($set_no, $skill_type_id, $type_id, $nature_id, $skill_id, $name, $timing_id) = (0, -1, 0, 0, 0, "", 0);
 
         my $item =  $node->as_text;
         $set_no = $node->as_text;

@@ -42,6 +42,8 @@ sub Main {
 
     if (ConstData::EXE_DATA) {
         &UploadData($upload, ConstData::EXE_DATA_PROPER_NAME,      "proper_names", "./output/data/proper_name.csv");
+        &UploadData($upload, ConstData::EXE_DATA_TYPE_NAME,        "type_names",   "./output/data/type_name.csv");
+        &UploadData($upload, ConstData::EXE_DATA_SKILL_DATA,       "skill_data",   "./output/data/skill_data.csv");
         &UploadData($upload, ConstData::EXE_CHARA_NAME,            "names",        "./output/chara/name.csv");
     }
     if (ConstData::EXE_CHARA) {

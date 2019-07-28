@@ -49,8 +49,7 @@ sub Init{
                 "vit",
                 "dex",
                 "mnt",
-                "battle_type_id",
-                "battle_type_color_id",
+                "type_id",
                 "fan_of_flower_id",
                 "line_id",
                 "created_at",
@@ -87,7 +86,7 @@ sub GetData{
 sub GetStatusData{
     my $self  = shift;
     my $div_cdatal_node = shift;
-    my ($str, $mag, $agi, $vit, $dex, $mnt, $battle_type_id, $battle_type_color_id, $fan_of_flower_id, $line_id) = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    my ($str, $mag, $agi, $vit, $dex, $mnt, $type_id, $fan_of_flower_id, $line_id) = (0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     my $span_markd_nodes = &GetNode::GetNode_Tag_Attr_RegExp("span", "class", "markd",  \$div_cdatal_node);
     
@@ -112,15 +111,15 @@ sub GetStatusData{
             $mnt = $node->right->as_text;
 
         } elsif ($item eq "タイプ") {
-            my $battle_type_name = $node->right->as_text;
-            $battle_type_name =~ s/【✿//g;
-            $battle_type_name =~ s/】//g;
-            $battle_type_id = $self->{CommonDatas}{ProperName}->GetOrAddId($battle_type_name);
+            my $type_name = $node->right->as_text;
+            $type_name =~ s/【✿//g;
+            $type_name =~ s/】//g;
             
             my @child_nodes = $node->right->content_list;
             if (scalar(@child_nodes)) {
-                $battle_type_color_id = $child_nodes[0]->attr("class");
-                $battle_type_color_id =~ s/type//;
+                $type_id = $child_nodes[0]->attr("class");
+                $type_id =~ s/type//;
+                $self->{CommonDatas}{TypeName}->SetId($type_id, $type_name);
             }
 
         } elsif ($item eq "推し花") {
@@ -131,7 +130,7 @@ sub GetStatusData{
         }
     }
 
-    $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ENo}, $str, $mag, $agi, $vit, $dex, $mnt, $battle_type_id, $battle_type_color_id, $fan_of_flower_id, $line_id, $self->{Date}) ));
+    $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ENo}, $str, $mag, $agi, $vit, $dex, $mnt, $type_id, $fan_of_flower_id, $line_id, $self->{Date}) ));
 
     return;
 }
