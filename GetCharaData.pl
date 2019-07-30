@@ -59,7 +59,7 @@ sub Init{
     my ($objects, $date, $common_datas)    = @_;
     
     foreach my $object( @$objects) {
-        $object->Init($date, $common_datas);
+        $object->Init($date, "", $common_datas);
     }
     return;
 }
