@@ -19,7 +19,7 @@ require "./source/lib/time.pm";
 require "./source/battle/LatestApNo.pm";
 require "./source/battle/Ap.pm";
 require "./source/battle/Party.pm";
-#require "./source/battle/Enemy.pm";
+require "./source/battle/Enemy.pm";
 
 use ConstData;        #定数呼び出し
 
@@ -52,7 +52,7 @@ sub Init() {
                                        { $self->{DataHandlers}{LatestApNo} = LatestApNo->new();}
     if (ConstData::EXE_BATTLE_AP)      { $self->{DataHandlers}{Ap}         = Ap->new();}
     if (ConstData::EXE_BATTLE_PARTY)   { $self->{DataHandlers}{Party}      = Party->new();}
-    #if (ConstData::EXE_BATTLE_ENEMY)     { $self->{DataHandlers}{Enemy} = Enemy->new();}
+    if (ConstData::EXE_BATTLE_ENEMY)   { $self->{DataHandlers}{Enemy}      = Enemy->new();}
 
     #初期化処理
     foreach my $object( values %{ $self->{DataHandlers} } ) {
@@ -135,7 +135,7 @@ sub ParseAp{
     # データリスト取得
     if (exists($self->{DataHandlers}{Ap}))  {$self->{DataHandlers}{Ap}->GetData ($ap_no, $last_modified, $$h2_subtitle_nodes[0], $div_frameareab_nodes, $h3_nodes, $$b_csred_nodes[0])};
     if (exists($self->{DataHandlers}{Party})) {$self->{DataHandlers}{Party}->GetData($ap_no, $div_frameareab_nodes)};
-    #if (exists($self->{DataHandlers}{Enemy})) {$self->{DataHandlers}{Enemy}->GetData($ap_no, $turn_table_nodes)};
+    if (exists($self->{DataHandlers}{Enemy})) {$self->{DataHandlers}{Enemy}->GetData($ap_no, $div_frameareab_nodes)};
 
     $tree = $tree->delete;
 }

@@ -48,11 +48,13 @@ sub Main {
     $upload->DeleteSameDate("uploaded_checks", $date);
 
     if (ConstData::EXE_DATA) {
+        &UploadData($upload, ConstData::EXE_DATA_GARDEN_NAME,     "proper_names", "./output/data/proper_name.csv");
         &UploadData($upload, ConstData::EXE_DATA_GARDEN_NAME,     "garden_names", "./output/data/garden_name.csv");
     }
     if (ConstData::EXE_BATTLE) {
-         &UploadResult($upload, ConstData::EXE_BATTLE_AP,  "aps",          "./output/battle/ap.csv",    "ap_no");
-         &UploadResult($upload, ConstData::EXE_BATTLE_AP,  "parties",      "./output/battle/party.csv", "ap_no");
+         &UploadResult($upload, ConstData::EXE_BATTLE_AP,    "aps",     "./output/battle/ap.csv",    "ap_no");
+         &UploadResult($upload, ConstData::EXE_BATTLE_PARTY, "parties", "./output/battle/party.csv", "ap_no");
+         &UploadResult($upload, ConstData::EXE_BATTLE_ENEMY, "enemies", "./output/battle/enemy.csv", "ap_no");
     }
         &UploadEnd($upload, $date, 1,                           "uploaded_checks", "./output/etc/uploaded_check_");
     print "date:$date\n";

@@ -29,5 +29,6 @@ use warnings;
     use constant EXE_BATTLE              => 1;
         use constant EXE_BATTLE_AP               => 1;
         use constant EXE_BATTLE_PARTY            => 1;
+        use constant EXE_BATTLE_ENEMY            => 1;
 
 1;
