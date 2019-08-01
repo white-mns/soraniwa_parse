@@ -70,11 +70,9 @@ sub Upload {
             #データ100件ごとにデータ送信
             if(scalar(@data_que) > 100){
                 &InsertDB($self,\@data_que,$for_table);
-                if (scalar(@one_file_data) > 2) {
-                    print $one_file_data[2] . "\n";
-                }else{
-                    print $one_file_data[0] . "\n";
-                }
+
+                print $one_file_data[0] . "\n";
+
                 @data_que =();
             }            
         }
