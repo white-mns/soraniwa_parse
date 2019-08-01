@@ -12,6 +12,6 @@ END_NO=$2
 # ファイル解析・アップロード
 
 perl ./GetResultData.pl      $START_NO $END_NO
-perl ./UploadParent.pl
+perl ./UploadResult.pl
 
 cd $CURENT  #元のディレクトリに戻る
