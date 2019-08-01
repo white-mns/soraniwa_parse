@@ -70,11 +70,9 @@ sub Upload {
             #データ100件ごとにデータ送信
             if(scalar(@data_que) > 100){
                 &InsertDB($self,\@data_que,$for_table);
-                if (scalar(@one_file_data) > 2) {
-                    print $one_file_data[2] . "\n";
-                }else{
-                    print $one_file_data[0] . "\n";
-                }
+
+                print $one_file_data[0] . "\n";
+
                 @data_que =();
             }            
         }
@@ -177,6 +175,33 @@ sub DeleteSameDate{
         );
     return;
 }
+
+#-----------------------------------#
+#
+#    指定したAP番号のデータを削除する
+#
+#-----------------------------------#
+sub DeleteRangeWhere{
+    my $self       = shift;
+    my $table_name = shift;
+    my $where_column = shift;
+    my $start_no   = shift;
+    my $end_no     = shift;
+
+    print  "delete range:" . $start_no . "-" . $end_no . "\n";
+    
+    my $where = $self->{DBI}->where;
+    $where->clause(['and', ":$where_column".'{>=}', ":$where_column".'{<=}']);
+    $where->param({$where_column => [$start_no, $end_no]});
+    
+    $self->{DBI}->delete(
+        table => $table_name,
+        where => $where
+        );
+    return;
+}
+
+
 #-----------------------------------#
 ##
 ##               同じ更新回のデータを削除する

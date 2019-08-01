@@ -41,17 +41,21 @@ sub new {
 #-----------------------------------#
 sub Init{
     my $self = shift;
-    ($self->{Date}, $self->{CommonDatas}) = @_;
+    ($self->{Date}, $self->{Dummy}, $self->{CommonDatas}) = @_;
 
     #インスタンス作成
     $self->{DataHandlers}{ProperName} = StoreProperName->new();
     $self->{DataHandlers}{SkillData}  = StoreProperData->new();
     $self->{DataHandlers}{TypeName}   = StoreProperName->new();
+    $self->{DataHandlers}{GardenName} = StoreProperName->new();
+    $self->{DataHandlers}{EnemyData}  = StoreProperData->new();
 
     #他パッケージへの引き渡し用インスタンス
     $self->{CommonDatas}{ProperName} = $self->{DataHandlers}{ProperName};
     $self->{CommonDatas}{SkillData}  = $self->{DataHandlers}{SkillData};
     $self->{CommonDatas}{TypeName}   = $self->{DataHandlers}{TypeName};
+    $self->{CommonDatas}{GardenName} = $self->{DataHandlers}{GardenName};
+    $self->{CommonDatas}{EnemyData}  = $self->{DataHandlers}{EnemyData};
 
     my $header_list = "";
     my $output_file = "";
@@ -72,7 +76,16 @@ sub Init{
     $output_file = "./output/data/". "type_name" . ".csv";
     $self->{DataHandlers}{TypeName}->Init($header_list, $output_file, " ");
 
-    # 技情報の初期化
+    # 庭園名の初期化
+    $header_list = [
+                "garden_id",
+                "name",
+    ];
+    $output_file = "./output/data/". "garden_name" . ".csv";
+    $self->{DataHandlers}{GardenName}->Init($header_list, $output_file, " ");
+    $self->{CommonDatas}{GardenName}->SetId(10000, "花壇の作業レポート");
+
+    # スキル情報の初期化
     $header_list = [
                 "skill_id",
                 "name",
@@ -81,6 +94,16 @@ sub Init{
     ];
     $output_file = "./output/data/". "skill_data" . ".csv";
     $self->{DataHandlers}{SkillData}->Init($header_list, $output_file, [" ", 0, ""]);
+
+    # 敵情報の初期化
+    $header_list = [
+                "enemy_id",
+                "name",
+                "line_id",
+                "type_id",
+    ];
+    $output_file = "./output/data/". "enemy_data" . ".csv";
+    $self->{DataHandlers}{EnemyData}->Init($header_list, $output_file, [" ", 0, 0]);
 
     return;
 }

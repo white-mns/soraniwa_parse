@@ -46,7 +46,7 @@ sub new {
 #-----------------------------------#
 sub Init{
     my $self = shift;
-    ($self->{Date}, $self->{CommonDatas}) = @_;
+    ($self->{Date}, $self->{Dummy}, $self->{CommonDatas}) = @_;
 
     #インスタンス作成
     if (ConstData::EXE_CHARA_NAME)   { $self->{DataHandlers}{Name}   = Name->new();}

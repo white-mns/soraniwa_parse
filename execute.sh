@@ -11,4 +11,8 @@ START_CURRENT=`pwd`
 
 cd $START_CURRENT  #実行ディレクトリに戻る
 
+./result_execute.sh
+
+cd $START_CURRENT  #実行ディレクトリに戻る
+
 cd $CURENT  #元のディレクトリに戻る
