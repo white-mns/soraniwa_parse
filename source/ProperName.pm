@@ -47,11 +47,13 @@ sub Init{
     $self->{DataHandlers}{ProperName} = StoreProperName->new();
     $self->{DataHandlers}{SkillData}  = StoreProperData->new();
     $self->{DataHandlers}{TypeName}   = StoreProperName->new();
+    $self->{DataHandlers}{GardenName} = StoreProperName->new();
 
     #他パッケージへの引き渡し用インスタンス
     $self->{CommonDatas}{ProperName} = $self->{DataHandlers}{ProperName};
     $self->{CommonDatas}{SkillData}  = $self->{DataHandlers}{SkillData};
     $self->{CommonDatas}{TypeName}   = $self->{DataHandlers}{TypeName};
+    $self->{CommonDatas}{GardenName} = $self->{DataHandlers}{GardenName};
 
     my $header_list = "";
     my $output_file = "";
@@ -71,6 +73,15 @@ sub Init{
     ];
     $output_file = "./output/data/". "type_name" . ".csv";
     $self->{DataHandlers}{TypeName}->Init($header_list, $output_file, " ");
+
+    # 庭園名の初期化
+    $header_list = [
+                "garden_id",
+                "name",
+    ];
+    $output_file = "./output/data/". "garden_name" . ".csv";
+    $self->{DataHandlers}{GardenName}->Init($header_list, $output_file, " ");
+    $self->{CommonDatas}{GardenName}->SetId(10000, "花壇の作業レポート");
 
     # 技情報の初期化
     $header_list = [

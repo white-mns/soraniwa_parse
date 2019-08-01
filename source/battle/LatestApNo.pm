@@ -17,7 +17,7 @@ use source::lib::GetNode;
 #------------------------------------------------------------------#
 #    パッケージの定義
 #------------------------------------------------------------------#     
-package LatestRNo;
+package LatestApNo;
 
 #-----------------------------------#
 #    コンストラクタ
@@ -38,18 +38,18 @@ sub Init(){
     ($self->{CommonDatas}) = @_;
 
     #初期化
-    $self->{LatestRNo} = 1;
-    $self->{Datas}{LatestRNo}  = StoreData->new();
+    $self->{LatestApNo} = 1;
+    $self->{Datas}{LatestApNo}  = StoreData->new();
     my $header_list = "";
    
     $header_list = [
-                "latest_r_no",
+                "latest_ap_no",
     ];
 
-    $self->{Datas}{LatestRNo}->Init($header_list);
+    $self->{Datas}{LatestApNo}->Init($header_list);
     
     #出力ファイル設定
-    $self->{Datas}{LatestRNo}->SetOutputName( "./output/battle/latest_r_no.csv" );
+    $self->{Datas}{LatestApNo}->SetOutputName( "./output/battle/latest_ap_no.csv" );
 
     $self->ReadLatestData();
     return;
@@ -61,7 +61,7 @@ sub Init(){
 sub ReadLatestData(){
     my $self      = shift;
     
-    my $file_name = "./output/battle/latest_r_no.csv";
+    my $file_name = "./output/battle/latest_ap_no.csv";
     
     #既存データの読み込み
     my $content = &IO::FileRead ( $file_name );
@@ -73,7 +73,7 @@ sub ReadLatestData(){
         my $latest_datas = []; 
         @$latest_datas   = split(ConstData::SPLIT, $data_set);
 
-        $self->{LatestRNo} = $$latest_datas[0] + 1;
+        $self->{LatestApNo} = $$latest_datas[0] + 1;
 
     }
 
@@ -87,13 +87,13 @@ sub ReadLatestData(){
 #          ターン別参加者一覧ノード
 #          タイトルデータノード
 #-----------------------------------#
-sub SetLatestRNo{
+sub SetLatestApNo{
     my $self = shift;
-    my $latest_r_no  = shift;
+    my $latest_ap_no  = shift;
     
-    $self->{LatestRNo} = $latest_r_no;
+    $self->{LatestApNo} = $latest_ap_no;
     
-    $self->{Datas}{LatestRNo}->AddData(join(ConstData::SPLIT, ($self->{LatestRNo})));
+    $self->{Datas}{LatestApNo}->AddData(join(ConstData::SPLIT, ($self->{LatestApNo})));
     
     return;
 }
@@ -105,10 +105,10 @@ sub SetLatestRNo{
 #          ターン別参加者一覧ノード
 #          タイトルデータノード
 #-----------------------------------#
-sub GetLatestRNo{
+sub GetLatestApNo{
     my $self = shift;
 
-    return $self->{LatestRNo};
+    return $self->{LatestApNo};
 }
 
 #-----------------------------------#

@@ -16,8 +16,8 @@ use source::lib::GetNode;
 require "./source/lib/IO.pm";
 require "./source/lib/time.pm";
 
-require "./source/battle/LatestRNo.pm";
-require "./source/battle/Page.pm";
+require "./source/battle/LatestApNo.pm";
+require "./source/battle/Ap.pm";
 #require "./source/battle/Party.pm";
 #require "./source/battle/Enemy.pm";
 
@@ -49,8 +49,8 @@ sub Init() {
     ($self->{StartNo}, $self->{EndNo}, $self->{CommonDatas}) = @_;
 
     #インスタンス作成
-                                         { $self->{DataHandlers}{LatestRNo}  = LatestRNo->new();}
-    if (ConstData::EXE_BATTLE_PAGE)      { $self->{DataHandlers}{Page}       = Page->new();}
+                                       { $self->{DataHandlers}{LatestApNo} = LatestApNo->new();}
+    if (ConstData::EXE_BATTLE_AP)      { $self->{DataHandlers}{Ap}         = Ap->new();}
     #if (ConstData::EXE_BATTLE_PARTY)     { $self->{DataHandlers}{Party} = Party->new();}
     #if (ConstData::EXE_BATTLE_ENEMY)     { $self->{DataHandlers}{Enemy} = Enemy->new();}
 
@@ -81,7 +81,7 @@ sub Execute{
         $start = $self->{StartNo}
 
     } else {
-        $start = $self->{DataHandlers}{LatestRNo}->GetLatestRNo($end);
+        $start = $self->{DataHandlers}{LatestApNo}->GetLatestApNo($end);
     }
 
     if (defined($self->{EndNo}) && $self->{EndNo} =~ /^[0-9]+$/) {
@@ -90,15 +90,15 @@ sub Execute{
 
     } else {
         $end   = GetMaxFileNo($directory,"");
-        $self->{DataHandlers}{LatestRNo}->SetLatestRNo($end);
+        $self->{DataHandlers}{LatestApNo}->SetLatestApNo($end);
     }
 
     print "$start to $end\n";
 
-    for (my $r_no=$start; $r_no<=$end; $r_no++) {
-        if ($r_no % 10 == 0) {print $r_no . "\n"};
+    for (my $ap_no=$start; $ap_no<=$end; $ap_no++) {
+        if ($ap_no % 10 == 0) {print $ap_no . "\n"};
 
-        $self->ParsePage($directory.$r_no.".html.gz",$r_no);
+        $self->ParseAp($directory.$ap_no.".html.gz",$ap_no);
     }
     
     return ;
@@ -109,14 +109,17 @@ sub Execute{
 #    引数｜ファイル名
 #    　　　ENo
 ##-----------------------------------#
-sub ParsePage{
+sub ParseAp{
     my $self       = shift;
     my $file_name  = shift;
-    my $battle_no  = shift;
+    my $ap_no  = shift;
+
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime((stat $file_name)[9]);
+    my $last_modified = ($year+1900) . "-" . sprintf("%02d", $mon + 1) . "-" . sprintf("%02d",$mday);
 
     #結果の読み込み
     my $content = "";
-    $content = &IO::FileRead($file_name);
+    $content = &IO::GzipRead($file_name);
 
     if (!$content) { return;}
 
@@ -124,14 +127,15 @@ sub ParsePage{
     my $tree = HTML::TreeBuilder->new;
     $tree->parse($content);
 
-    my $title_b_nodes = &GetNode::GetNode_Tag_Attr("b", "class", "T6", \$tree);
-    my $turn_table_nodes = &GetNode::GetNode_Tag_Attr("table", "width", "700", \$tree);
-    my $t6i_td_nodes = &GetNode::GetNode_Tag_Attr("td", "class", "T6i", \$tree);
+    my $div_frameareab_nodes = &GetNode::GetNode_Tag_Attr("div", "class", "frameareab", \$tree);
+    my $h2_subtitle_nodes    = &GetNode::GetNode_Tag_Attr("h2",  "class", "subtitle",   \$tree);
+    my $h3_nodes = &GetNode::GetNode_Tag("h3", \$tree);
+    my $b_csred_nodes = &GetNode::GetNode_Tag_Attr("b", "class", "csred", \$tree);
 
     # データリスト取得
-    #if (exists($self->{DataHandlers}{Page}))  {$self->{DataHandlers}{Page}->GetData ($battle_no, $turn_table_nodes, $$title_b_nodes[0], $t6i_td_nodes)};
-    #if (exists($self->{DataHandlers}{Party})) {$self->{DataHandlers}{Party}->GetData($battle_no, $turn_table_nodes)};
-    #if (exists($self->{DataHandlers}{Enemy})) {$self->{DataHandlers}{Enemy}->GetData($battle_no, $turn_table_nodes)};
+    if (exists($self->{DataHandlers}{Ap}))  {$self->{DataHandlers}{Ap}->GetData ($ap_no, $last_modified, $$h2_subtitle_nodes[0], $div_frameareab_nodes, $h3_nodes, $$b_csred_nodes[0])};
+    #if (exists($self->{DataHandlers}{Party})) {$self->{DataHandlers}{Party}->GetData($ap_no, $turn_table_nodes)};
+    #if (exists($self->{DataHandlers}{Enemy})) {$self->{DataHandlers}{Enemy}->GetData($ap_no, $turn_table_nodes)};
 
     $tree = $tree->delete;
 }
