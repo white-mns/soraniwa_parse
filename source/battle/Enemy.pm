@@ -83,7 +83,7 @@ sub GetEnemyData{
     if (!scalar(@$div_frameareab_nodes)) {return;}
 
     my $td_nodes = &GetNode::GetNode_Tag("td", \$$div_frameareab_nodes[0]);
-    my $enemy_td = $$td_nodes[1];
+    if (!scalar(@$td_nodes)) {return;}
 
     my @td_child = $$td_nodes[1]->content_list;
 
@@ -103,7 +103,23 @@ sub GetEnemyData{
             $suffix_id = $self->{CommonDatas}{ProperName}->GetOrAddId($1);
         };
 
-        my $enemy_id = $self->{CommonDatas}{ProperName}->GetOrAddId($enemy_name);
+        my $line_node = $div_child_child[1];
+        my $line_id = -1;
+
+        if ($line_node->as_text =~ /前/) {
+            $line_id = 0;
+        } elsif ($line_node->as_text =~ /後/) {
+            $line_id = 1;
+        }
+
+        my $type_node = $div_child_child[3];
+        my $type_id = 0;
+
+        if ($type_node->attr("class") =~ /type(\d+)/) {
+            $type_id = $1;
+        }
+
+        my $enemy_id = $self->{CommonDatas}{EnemyData}->GetOrAddId(1, [$enemy_name, $line_id, $type_id]);
 
         $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ApNo}, $enemy_id, $suffix_id) ));
 

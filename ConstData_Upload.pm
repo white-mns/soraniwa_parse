@@ -22,6 +22,7 @@ use warnings;
         use constant EXE_DATA_TYPE_NAME          => 1;
         use constant EXE_DATA_SKILL_DATA         => 1;
         use constant EXE_DATA_GARDEN_NAME        => 1;
+        use constant EXE_DATA_ENEMY_DATA         => 1;
     use constant EXE_CHARA                => 1;  
         use constant EXE_CHARA_NAME              => 1;
         use constant EXE_CHARA_STATUS            => 1;
