@@ -51,7 +51,8 @@ sub Main {
         &UploadData($upload, ConstData::EXE_DATA_GARDEN_NAME,     "garden_names", "./output/data/garden_name.csv");
     }
     if (ConstData::EXE_BATTLE) {
-         &UploadResult($upload, ConstData::EXE_BATTLE_AP,  "aps",          "./output/battle/ap.csv", "ap_no");
+         &UploadResult($upload, ConstData::EXE_BATTLE_AP,  "aps",          "./output/battle/ap.csv",    "ap_no");
+         &UploadResult($upload, ConstData::EXE_BATTLE_AP,  "parties",      "./output/battle/party.csv", "ap_no");
     }
         &UploadEnd($upload, $date, 1,                           "uploaded_checks", "./output/etc/uploaded_check_");
     print "date:$date\n";
