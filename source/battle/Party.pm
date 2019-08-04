@@ -81,19 +81,24 @@ sub GetPartyData{
 
     if (!scalar(@$div_frameareab_nodes)) {return;}
 
-    my $party_order = 0;
+    my $td_nodes = &GetNode::GetNode_Tag("td", \$$div_frameareab_nodes[0]);
 
-    my $a_nodes = &GetNode::GetNode_Tag("a", \$$div_frameareab_nodes[0]);
+    if (!scalar(@$td_nodes)) {return;}
 
-    foreach my $a_node (@$a_nodes) {
-        if ($a_node->attr("href") =~ /eno=(\d+)/) {
-            my $e_no = $1;
+    foreach my $td_node (@$td_nodes) {
+        my $party_order = 0;
+        my $a_nodes = &GetNode::GetNode_Tag("a", \$td_node);
 
-            $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ApNo}, $e_no, $party_order) ));
+        foreach my $a_node (@$a_nodes) {
+            if ($a_node->attr("href") =~ /eno=(\d+)/) {
+                my $e_no = $1;
 
-            $party_order += 1;
+                $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ApNo}, $e_no, $party_order) ));
+
+                $party_order += 1;
+            }
+
         }
-
     }
 
     return;
