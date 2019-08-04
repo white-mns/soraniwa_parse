@@ -178,6 +178,7 @@ sub GetBattleResult{
     my $text = $battle_finish_right->as_text;
 
     if    ($text =~ /左チームの勝利/)     { return 1; }
+    elsif ($text =~ /右チームの勝利/)     { return -1; }
     elsif ($text =~ /左チームの敗北/)     { return -1; }
     elsif ($text =~ /決着が/)             { return 0; }
 
@@ -204,9 +205,15 @@ sub GetApData{
         my $action_type = 0;
 
         $self->{Datas}{Ap}->AddData(join(ConstData::SPLIT, ($self->{ApNo}, $action_type, $garden_id, $progress, $self->{PartyNum}, $self->{EnemyNum}, $self->{BattleResult}, $self->{SpecialBattle}, 0, $self->{CreatedAt})));
-    }
 
-    if ($subtitle =~ /　　(\d+)\.(.+) \[(.+)\]/) {
+    } elsif ($subtitle =~ /　　練習戦！/) {
+        my $garden_id = 20000;
+        my $progress = -1;
+        my $action_type = 3;
+
+        $self->{Datas}{Ap}->AddData(join(ConstData::SPLIT, ($self->{ApNo}, $action_type, $garden_id, $progress, $self->{PartyNum}, $self->{EnemyNum}, $self->{BattleResult}, $self->{SpecialBattle}, 0, $self->{CreatedAt})));
+
+    } elsif ($subtitle =~ /　　(\d+)\.(.+) \[(.+)\]/) {
         my $garden_id = $1;
         my $title = $2;
         my $progress = $3;

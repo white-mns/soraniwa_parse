@@ -83,7 +83,12 @@ sub GetEnemyData{
     if (!scalar(@$div_frameareab_nodes)) {return;}
 
     my $td_nodes = &GetNode::GetNode_Tag("td", \$$div_frameareab_nodes[0]);
+
     if (!scalar(@$td_nodes)) {return;}
+
+    my $a_nodes = &GetNode::GetNode_Tag("a", \$$td_nodes[1]);
+
+    if (scalar(@$a_nodes)) { return;} # 練習戦で右側PTをエネミーとして取得しない
 
     my @td_child = $$td_nodes[1]->content_list;
 
