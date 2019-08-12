@@ -50,6 +50,7 @@ sub Init{
                 "skill_id",
                 "name",
                 "timing_id",
+                "use_number",
                 "created_at",
     ];
 
@@ -88,42 +89,62 @@ sub GetSkillData{
     my $span_marks_marki0_nodes = &GetNode::GetNode_Tag_Attr("span", "class", "marks marki0",  \$div_cdatal_node);
     
     foreach my $node (@$span_marks_marki0_nodes) {
-        my ($set_no, $skill_type_id, $type_id, $nature_id, $skill_id, $name, $timing_id) = (0, -1, 0, 0, 0, "", 0);
-
-        my $item =  $node->as_text;
-        $set_no = $node->as_text;
-
         my $skill_node = $node->right;
         my @skill_child_nodes = $skill_node->content_list;
 
         if (scalar(@skill_child_nodes)<2) {next;}
 
-        $type_id = $skill_child_nodes[0]->attr("class");
-        $type_id =~ s/type//;
+        if ($skill_node->attr("style") eq "color:#409020;") {
+            print "new". $self->{ENo} ."\n";
 
-        my $text_node = $skill_node->right;
-        my $b_nodes = &GetNode::GetNode_Tag("b",  \$text_node);
-        if (scalar(@$b_nodes)) {
-            my $timing = $$b_nodes[0]->as_text;
-            $timing =~ s/: //g;
-            $timing_id = $self->{CommonDatas}{ProperName}->GetOrAddId($timing);
+        } else {
+            $self->GetSkillData_until_20190812($node);
         }
-
-        my $text_span_nodes = &GetNode::GetNode_Tag("span",  \$text_node);
-        my $text = "";
-        if (scalar(@$b_nodes)) {
-            $text = $$text_span_nodes[0]->as_text;
-        }
-
-        $skill_id = $skill_child_nodes[1];
-        $skill_id = $self->{CommonDatas}{SkillData}->GetOrAddId(1, [$skill_child_nodes[1], " ", $text]);
-
-        $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ENo}, $set_no, $skill_type_id, $type_id, $nature_id, $skill_id, $name, $timing_id, $self->{Date}) ));
     }
 
     return;
 }
 
+#-----------------------------------#
+#    スキルデータ取得(～20190812)
+#------------------------------------
+#    引数｜スキル設定番号ノード
+#-----------------------------------#
+sub GetSkillData_until_20190812{
+    my $self  = shift;
+    my $node = shift;
+
+    my ($set_no, $skill_type_id, $type_id, $nature_id, $skill_id, $name, $timing_id) = (0, -1, 0, 0, 0, "", 0);
+
+    $set_no = $node->as_text;
+
+    my $skill_node = $node->right;
+    my @skill_child_nodes = $skill_node->content_list;
+
+    $type_id = $skill_child_nodes[0]->attr("class");
+    $type_id =~ s/type//;
+
+    my $text_node = $skill_node->right;
+    my $b_nodes = &GetNode::GetNode_Tag("b",  \$text_node);
+    if (scalar(@$b_nodes)) {
+        my $timing = $$b_nodes[0]->as_text;
+        $timing =~ s/: //g;
+        $timing_id = $self->{CommonDatas}{ProperName}->GetOrAddId($timing);
+    }
+
+    my $text_span_nodes = &GetNode::GetNode_Tag("span",  \$text_node);
+    my $text = "";
+    if (scalar(@$b_nodes)) {
+        $text = $$text_span_nodes[0]->as_text;
+    }
+
+    $skill_id = $skill_child_nodes[1];
+    $skill_id = $self->{CommonDatas}{SkillData}->GetOrAddId(1, [$skill_child_nodes[1], " ", $text]);
+
+    $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ENo}, $set_no, $skill_type_id, $type_id, $nature_id, $skill_id, $name, $timing_id, 0, $self->{Date}) ));
+
+    return;
+}
 #-----------------------------------#
 #    出力
 #------------------------------------
