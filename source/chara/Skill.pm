@@ -95,11 +95,70 @@ sub GetSkillData{
         if (scalar(@skill_child_nodes)<2) {next;}
 
         if ($skill_node->attr("style") eq "color:#409020;") {
-            print "new". $self->{ENo} ."\n";
+            $self->GetSkillData_detail($node);
 
         } else {
-            $self->GetSkillData_until_20190812($node);
+            $self->GetSkillData_simple($node);
         }
+    }
+
+    return;
+}
+#-----------------------------------#
+#    スキルデータ取得(～20190812)
+#------------------------------------
+#    引数｜スキル設定番号ノード
+#-----------------------------------#
+sub GetSkillData_detail{
+    my $self  = shift;
+    my $node = shift;
+
+    my ($set_no, $skill_type_id, $type_id, $nature_id, $skill_id, $name, $timing_id, $use_number) = (0, -1, 0, 0, 0, "", 0, 0);
+
+    $set_no = $node->as_text;
+
+    my @right_nodes = $node->right;
+    my $skill_node = $right_nodes[0];
+    my @skill_child_nodes = $skill_node->content_list;
+
+    $type_id = $skill_child_nodes[0]->attr("class");
+    $type_id =~ s/type//;
+
+    my $nature = $skill_child_nodes[1];
+    $nature =~ s/\[//;
+    $nature =~ s/\]//;
+    $nature_id = $self->{CommonDatas}{ProperName}->GetOrAddId($nature);
+
+    my $skill_name = $right_nodes[1]->as_text;
+    my $condition_text = $right_nodes[3]->as_text;
+
+    if ($condition_text =~ /\((.+)\/(.+)回\)/) {
+        my $timing = $1;
+        $timing_id = $self->{CommonDatas}{ProperName}->GetOrAddId($timing);
+
+        $use_number = $2;
+        $use_number = ($use_number =~ /∞/) ? 9999 : $use_number;
+    }
+
+    my $skill_data_node = $right_nodes[5];
+    my @skill_data_child = $skill_data_node->content_list;
+    my ($skill_update, $cost_id, $text) = (0, 0, "");
+
+    if (scalar(@skill_data_child) >= 3) {
+        my $cost = $skill_data_child[1]->as_text;
+        $cost =~ s/【//;
+        $cost =~ s/】//;
+        $cost_id = $self->{CommonDatas}{ProperName}->GetOrAddId($cost);
+
+        $text = $skill_data_child[2]->as_text;
+        if ($text =~ /\[/) {
+            $skill_update = 1;
+        }
+    }
+    
+    if ($skill_name ne ""){
+        $skill_id = $self->{CommonDatas}{SkillData}->GetOrAddId($skill_update, [$skill_name, $cost_id, $text]);
+        $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ENo}, $set_no, $skill_type_id, $type_id, $nature_id, $skill_id, $name, $timing_id, $use_number, $self->{Date}) ));
     }
 
     return;
@@ -110,7 +169,7 @@ sub GetSkillData{
 #------------------------------------
 #    引数｜スキル設定番号ノード
 #-----------------------------------#
-sub GetSkillData_until_20190812{
+sub GetSkillData_simple{
     my $self  = shift;
     my $node = shift;
 
@@ -138,13 +197,13 @@ sub GetSkillData_until_20190812{
         $text = $$text_span_nodes[0]->as_text;
     }
 
-    $skill_id = $skill_child_nodes[1];
-    $skill_id = $self->{CommonDatas}{SkillData}->GetOrAddId(1, [$skill_child_nodes[1], " ", $text]);
+    $skill_id = $self->{CommonDatas}{SkillData}->GetOrAddId(0, [$skill_child_nodes[1], 0, $text]);
 
     $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ENo}, $set_no, $skill_type_id, $type_id, $nature_id, $skill_id, $name, $timing_id, 0, $self->{Date}) ));
 
     return;
 }
+
 #-----------------------------------#
 #    出力
 #------------------------------------
