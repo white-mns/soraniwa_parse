@@ -53,10 +53,13 @@ sub Main {
         &UploadData($upload, ConstData::EXE_DATA_ENEMY_DATA,  "enemy_data",   "./output/data/enemy_data.csv");
     }
     if (ConstData::EXE_BATTLE) {
-         &UploadResult($upload, ConstData::EXE_BATTLE_AP,    "aps",     "./output/battle/ap.csv",    "ap_no");
-         &UploadResult($upload, ConstData::EXE_BATTLE_PARTY, "parties", "./output/battle/party.csv", "ap_no");
-         &UploadResult($upload, ConstData::EXE_BATTLE_ENEMY, "enemies", "./output/battle/enemy.csv", "ap_no");
-         &UploadResult($upload, ConstData::EXE_BATTLE_DROP,  "drops",   "./output/battle/drop.csv",  "ap_no");
+         &UploadResult($upload, ConstData::EXE_BATTLE_AP,    "aps",       "./output/battle/ap.csv",    "ap_no");
+         &UploadResult($upload, ConstData::EXE_BATTLE_PARTY, "parties",   "./output/battle/party.csv", "ap_no");
+         &UploadResult($upload, ConstData::EXE_BATTLE_ENEMY, "enemies",   "./output/battle/enemy.csv", "ap_no");
+         &UploadResult($upload, ConstData::EXE_BATTLE_DROP,  "drops",     "./output/battle/drop.csv",  "ap_no");
+    }
+    if (ConstData::EXE_NEW) {
+         &UploadResult($upload, ConstData::EXE_NEW_DROP,     "new_drops", "./output/new/drop.csv",     "ap_no");
     }
         &UploadEnd($upload, $date, 1,                           "uploaded_checks", "./output/etc/uploaded_check_");
     print "date:$date\n";
@@ -128,7 +131,7 @@ sub UploadEnd {
 sub GetColumnRange {
     my ($file_name, $column_num) = @_;
 
-    my ($start_no, $end_no) = (99999,0);
+    my ($start_no, $end_no) = (99999999,0);
 
     my $content = &IO::FileRead ($file_name);
 

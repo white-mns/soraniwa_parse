@@ -10,6 +10,7 @@ use strict;
 use warnings;
 require "./source/lib/Store_Data.pm";
 require "./source/lib/Store_HashData.pm";
+require "./source/new/NewDrop.pm";
 use ConstData;        #定数呼び出し
 use source::lib::GetNode;
 
@@ -38,6 +39,7 @@ sub Init(){
 
     #初期化
     $self->{Datas}{Data}  = StoreData->new();
+    $self->{Datas}{New}   = NewDrop->new();
     my $header_list = "";
    
     $header_list = [
@@ -46,6 +48,7 @@ sub Init(){
     ];
 
     $self->{Datas}{Data}->Init($header_list);
+    $self->{Datas}{New}->Init($self->{CommonDatas});
     
     #出力ファイル設定
     $self->{Datas}{Data}->SetOutputName( "./output/battle/drop.csv" );
@@ -110,6 +113,8 @@ sub GetDropData{
             if ($b_node->as_text =~ /(.+) を獲得した！！/) {
                 my $drop_id = $self->{CommonDatas}{ProperName}->GetOrAddId($1);
                 $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ApNo}, $drop_id) ));
+    
+                $self->{Datas}{New}->RecordNewDropData($self->{ApNo}, $drop_id);
             }
         }
     }
