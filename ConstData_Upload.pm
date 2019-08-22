@@ -33,6 +33,7 @@ use warnings;
         use constant EXE_BATTLE_ENEMY            => 1;
         use constant EXE_BATTLE_DROP             => 1;
     use constant EXE_NEW                  => 1;
+        use constant EXE_NEW_SKILL               => 1;
         use constant EXE_NEW_DROP                => 1;
 
 1;
