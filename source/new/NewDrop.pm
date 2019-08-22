@@ -1,5 +1,5 @@
 #===================================================================
-#        PC名取得パッケージ
+#        新規獲得アイテム情報取得パッケージ
 #-------------------------------------------------------------------
 #            (C) 2019 @white_mns
 #===================================================================
@@ -17,7 +17,7 @@ use source::lib::GetNode;
 #------------------------------------------------------------------#
 #    パッケージの定義
 #------------------------------------------------------------------#     
-package Name;
+package NewDrop;
 
 #-----------------------------------#
 #    コンストラクタ
@@ -35,23 +35,26 @@ sub new {
 #-----------------------------------#
 sub Init{
     my $self = shift;
-    ($self->{Date}, $self->{CommonDatas}) = @_;
+    ($self->{CommonDatas}) = @_;
     
     #初期化
-    $self->{Datas}{Data}  = StoreData->new();
+    $self->{Datas}{NewDrop} = StoreData->new();
+    $self->{Datas}{AllDrop} = StoreData->new();
     my $header_list = "";
    
     $header_list = [
-                "e_no",
-                "name",
+                "ap_no",
+                "drop_id",
     ];
 
-    $self->{Datas}{Data}->Init($header_list);
+    $self->{Datas}{NewDrop}->Init($header_list);
+    $self->{Datas}{AllDrop}->Init($header_list);
     
     #出力ファイル設定
-    $self->{Datas}{Data}->SetOutputName( "./output/chara/name.csv" );
-
-    $self->ReadLastData();
+    $self->{Datas}{NewDrop}->SetOutputName( "./output/new/drop.csv" );
+    $self->{Datas}{AllDrop}->SetOutputName( "./output/new/all_drop.csv" );
+    
+    $self->ReadLastNewData();
 
     return;
 }
@@ -59,11 +62,10 @@ sub Init{
 #-----------------------------------#
 #    既存データを読み込む
 #-----------------------------------#
-sub ReadLastData(){
+sub ReadLastNewData(){
     my $self      = shift;
     
-    my $file_name = "";
-    $file_name = "./output/chara/name.csv" ;
+    my $file_name = "./output/new/all_drop.csv" ;
     
     #既存データの読み込み
     my $content = &IO::FileRead ( $file_name );
@@ -72,53 +74,36 @@ sub ReadLastData(){
     shift (@file_data);
     
     foreach my  $data_set(@file_data){
-        my $all_name_datas = []; 
-        @$all_name_datas   = split(ConstData::SPLIT, $data_set);
-        my $e_no = $$all_name_datas[0];
-        my $name = $$all_name_datas[1];
-        if(!exists($self->{AllName}{$e_no})){
-            $self->{AllName}{$e_no} = [$e_no, $name];
+        my $new_drop_datas = []; 
+        @$new_drop_datas   = split(ConstData::SPLIT, $data_set);
+        my $ap_no = $$new_drop_datas[0];
+        my $drop_id = $$new_drop_datas[1];
+        if(!exists($self->{AllDrop}{$drop_id})){
+            $self->{AllDrop}{$drop_id} = [$ap_no, $drop_id];
         }
     }
 
     return;
 }
 
-
 #-----------------------------------#
-#    データ取得
+#    新規獲得アイテムの判定と記録
 #------------------------------------
-#    引数｜e_no,サブキャラ番号,ステータステーブルノード
+#    引数｜アイテム名
 #-----------------------------------#
-sub GetData{
+sub RecordNewDropData{
     my $self    = shift;
-    my $e_no    = shift;
-    my $div_inner_boardclip_node = shift;
-    
-    $self->{ENo} = $e_no;
+    my $ap_no = shift;
+    my $drop_id = shift;
 
-    $self->GetNameData($div_inner_boardclip_node);
-    
-    return;
-}
-#-----------------------------------#
-#    名前データ取得
-#------------------------------------
-#    引数｜ステータステーブルノード
-#-----------------------------------#
-sub GetNameData{
-    my $self  = shift;
-    my $div_inner_boardclip_node = shift;
-    my $name = "";
- 
-    $name = $div_inner_boardclip_node->as_text;
-    $name =~ s/ENo.\d+　//g;
+    if (exists($self->{AllDrop}{$drop_id})) {return;}
 
-    $self->{AllName}{$self->{ENo}} = [$self->{ENo}, $name];
+    $self->{Datas}{NewDrop}->AddData(join(ConstData::SPLIT, ($ap_no, $drop_id) ));
+
+    $self->{AllDrop}{$drop_id} = [$ap_no, $drop_id];
 
     return;
 }
-
 #-----------------------------------#
 #    出力
 #------------------------------------
@@ -126,12 +111,12 @@ sub GetNameData{
 #-----------------------------------#
 sub Output{
     my $self = shift;
-    
-    # 全キャラクター名情報の書き出し
-    foreach my $e_no (sort{$a cmp $b} keys %{ $self->{AllName} } ) {
-        $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, @{ $self->{AllName}{$e_no} }));
-    }
 
+    # 新出データ判定用の既出情報の書き出し
+    foreach my $id (sort{$a cmp $b} keys %{ $self->{AllDrop} } ) {
+        $self->{Datas}{AllDrop}->AddData(join(ConstData::SPLIT, @{ $self->{AllDrop}{$id} }));
+    }
+    
     foreach my $object( values %{ $self->{Datas} } ) {
         $object->Output();
     }

@@ -1,5 +1,5 @@
 #===================================================================
-#        PC名取得パッケージ
+#        新規設定スキル情報取得パッケージ
 #-------------------------------------------------------------------
 #            (C) 2019 @white_mns
 #===================================================================
@@ -12,12 +12,13 @@ require "./source/lib/Store_Data.pm";
 require "./source/lib/Store_HashData.pm";
 use ConstData;        #定数呼び出し
 use source::lib::GetNode;
-
+use Time::Piece; 
+use Time::Seconds;
 
 #------------------------------------------------------------------#
 #    パッケージの定義
 #------------------------------------------------------------------#     
-package Name;
+package NewSkill;
 
 #-----------------------------------#
 #    コンストラクタ
@@ -38,20 +39,23 @@ sub Init{
     ($self->{Date}, $self->{CommonDatas}) = @_;
     
     #初期化
-    $self->{Datas}{Data}  = StoreData->new();
+    $self->{Datas}{NewSkill} = StoreData->new();
+    $self->{Datas}{AllSkill} = StoreData->new();
     my $header_list = "";
    
     $header_list = [
-                "e_no",
-                "name",
+                "created_at",
+                "skill_id",
     ];
 
-    $self->{Datas}{Data}->Init($header_list);
+    $self->{Datas}{NewSkill}->Init($header_list);
+    $self->{Datas}{AllSkill}->Init($header_list);
     
     #出力ファイル設定
-    $self->{Datas}{Data}->SetOutputName( "./output/chara/name.csv" );
-
-    $self->ReadLastData();
+    $self->{Datas}{NewSkill}->SetOutputName( "./output/new/skill_" . $self->{Date} . ".csv" );
+    $self->{Datas}{AllSkill}->SetOutputName( "./output/new/all_skill_" . $self->{Date} . ".csv" );
+    
+    $self->ReadLastNewData();
 
     return;
 }
@@ -59,11 +63,13 @@ sub Init{
 #-----------------------------------#
 #    既存データを読み込む
 #-----------------------------------#
-sub ReadLastData(){
+sub ReadLastNewData(){
     my $self      = shift;
-    
-    my $file_name = "";
-    $file_name = "./output/chara/name.csv" ;
+   
+    my $today = Time::Piece->strptime($self->{Date}, '%Y-%m-%d');
+    my $yesterday = $today - Time::Seconds->new(86400);
+
+    my $file_name = "./output/new/all_skill_" . $yesterday->year . "-" . sprintf("%02d", $yesterday->mon) . "-" . sprintf("%02d", $yesterday->mday) . ".csv" ;
     
     #既存データの読み込み
     my $content = &IO::FileRead ( $file_name );
@@ -72,53 +78,36 @@ sub ReadLastData(){
     shift (@file_data);
     
     foreach my  $data_set(@file_data){
-        my $all_name_datas = []; 
-        @$all_name_datas   = split(ConstData::SPLIT, $data_set);
-        my $e_no = $$all_name_datas[0];
-        my $name = $$all_name_datas[1];
-        if(!exists($self->{AllName}{$e_no})){
-            $self->{AllName}{$e_no} = [$e_no, $name];
+        my $new_skill_datas = []; 
+        @$new_skill_datas   = split(ConstData::SPLIT, $data_set);
+        my $date = $$new_skill_datas[0];
+        my $skill_id = $$new_skill_datas[1];
+        if(!exists($self->{AllSkill}{$skill_id})){
+            $self->{AllSkill}{$skill_id} = [$date, $skill_id];
         }
     }
 
     return;
 }
 
-
 #-----------------------------------#
-#    データ取得
+#    新規設定スキルの判定と記録
 #------------------------------------
-#    引数｜e_no,サブキャラ番号,ステータステーブルノード
+#    引数｜アイテム名
 #-----------------------------------#
-sub GetData{
+sub RecordNewSkillData{
     my $self    = shift;
-    my $e_no    = shift;
-    my $div_inner_boardclip_node = shift;
-    
-    $self->{ENo} = $e_no;
+    my $date = shift;
+    my $skill_id = shift;
 
-    $self->GetNameData($div_inner_boardclip_node);
-    
-    return;
-}
-#-----------------------------------#
-#    名前データ取得
-#------------------------------------
-#    引数｜ステータステーブルノード
-#-----------------------------------#
-sub GetNameData{
-    my $self  = shift;
-    my $div_inner_boardclip_node = shift;
-    my $name = "";
- 
-    $name = $div_inner_boardclip_node->as_text;
-    $name =~ s/ENo.\d+　//g;
+    if (exists($self->{AllSkill}{$skill_id})) {return;}
 
-    $self->{AllName}{$self->{ENo}} = [$self->{ENo}, $name];
+    $self->{Datas}{NewSkill}->AddData(join(ConstData::SPLIT, ($date, $skill_id) ));
+
+    $self->{AllSkill}{$skill_id} = [$date, $skill_id];
 
     return;
 }
-
 #-----------------------------------#
 #    出力
 #------------------------------------
@@ -126,12 +115,12 @@ sub GetNameData{
 #-----------------------------------#
 sub Output{
     my $self = shift;
-    
-    # 全キャラクター名情報の書き出し
-    foreach my $e_no (sort{$a cmp $b} keys %{ $self->{AllName} } ) {
-        $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, @{ $self->{AllName}{$e_no} }));
-    }
 
+    # 新出データ判定用の既出情報の書き出し
+    foreach my $id (sort{$a cmp $b} keys %{ $self->{AllSkill} } ) {
+        $self->{Datas}{AllSkill}->AddData(join(ConstData::SPLIT, @{ $self->{AllSkill}{$id} }));
+    }
+    
     foreach my $object( values %{ $self->{Datas} } ) {
         $object->Output();
     }

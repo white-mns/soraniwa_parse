@@ -10,6 +10,7 @@ use strict;
 use warnings;
 require "./source/lib/Store_Data.pm";
 require "./source/lib/Store_HashData.pm";
+require "./source/new/NewSkill.pm";
 use ConstData;        #定数呼び出し
 use source::lib::GetNode;
 
@@ -39,6 +40,7 @@ sub Init{
     
     #初期化
     $self->{Datas}{Data}  = StoreData->new();
+    $self->{Datas}{New}   = NewSkill->new();
     my $header_list = "";
    
     $header_list = [
@@ -55,6 +57,7 @@ sub Init{
     ];
 
     $self->{Datas}{Data}->Init($header_list);
+    $self->{Datas}{New}->Init($self->{Date}, $self->{CommonDatas});
     
     #出力ファイル設定
     $self->{Datas}{Data}->SetOutputName( "./output/chara/skill_" . $self->{Date} . ".csv" );
@@ -159,6 +162,8 @@ sub GetSkillData_detail{
     if ($skill_name ne ""){
         $skill_id = $self->{CommonDatas}{SkillData}->GetOrAddId($skill_update, [$skill_name, $cost_id, $text]);
         $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ENo}, $set_no, $skill_type_id, $type_id, $nature_id, $skill_id, $name, $timing_id, $use_number, $self->{Date}) ));
+
+        $self->{Datas}{New}->RecordNewSkillData($self->{Date}, $skill_id);
     }
 
     return;
@@ -200,6 +205,8 @@ sub GetSkillData_simple{
     $skill_id = $self->{CommonDatas}{SkillData}->GetOrAddId(0, [$skill_child_nodes[1], 0, $text]);
 
     $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ENo}, $set_no, $skill_type_id, $type_id, $nature_id, $skill_id, $name, $timing_id, 0, $self->{Date}) ));
+
+    $self->{Datas}{New}->RecordNewSkillData($self->{Date}, $skill_id);
 
     return;
 }
