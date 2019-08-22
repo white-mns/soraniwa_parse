@@ -72,7 +72,7 @@ sub Init() {
 sub Execute{
     my $self        = shift;
 
-    print "read character files...\n";
+    print "read battle files...\n";
 
     my $start = 1;
     my $end   = 0;
