@@ -124,6 +124,8 @@ sub InsertDB{
     my $insert_data = shift;
     my $table_name  = shift;
     
+    if (!scalar(@$insert_data)) {return;}
+    
     eval {
         $self->{DBI}->insert($insert_data, table     => $table_name);
     };
