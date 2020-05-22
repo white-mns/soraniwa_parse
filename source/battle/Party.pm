@@ -83,25 +83,43 @@ sub GetPartyData{
 
     my $td_nodes = &GetNode::GetNode_Tag("td", \$$div_frameareab_nodes[0]);
 
-    if (!scalar(@$td_nodes)) {return;}
+    if (!scalar(@$td_nodes)) { # 花壇の世話時のレイアウト
+        $self->GetENoAndOrder($$div_frameareab_nodes[0]);
+        return;
+    }
 
     foreach my $td_node (@$td_nodes) {
-        my $party_order = 0;
-        my $a_nodes = &GetNode::GetNode_Tag("a", \$td_node);
-
-        foreach my $a_node (@$a_nodes) {
-            if ($a_node->attr("href") =~ /eno=(\d+)/) {
-                my $e_no = $1;
-
-                $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ApNo}, $e_no, $party_order) ));
-
-                $party_order += 1;
-            }
-
-        }
+        $self->GetENoAndOrder($td_node);
     }
 
     return;
+}
+
+#-----------------------------------#
+#    メンバーのEnoと並び順を取得
+#------------------------------------
+#    引数｜ターン別参加者一覧ノード
+#-----------------------------------#
+sub GetENoAndOrder{
+    my $self  = shift;
+    my $node = shift;
+
+    if (!$node) {return;}
+
+    my $party_order = 0;
+    my $a_nodes = &GetNode::GetNode_Tag("a", \$node);
+
+    foreach my $a_node (@$a_nodes) {
+        if ($a_node->attr("href") =~ /eno=(\d+)/) {
+            my $e_no = $1;
+
+            $self->{Datas}{Data}->AddData(join(ConstData::SPLIT, ($self->{ApNo}, $e_no, $party_order) ));
+
+            $party_order += 1;
+        }
+
+    }
+
 }
 
 #-----------------------------------#
