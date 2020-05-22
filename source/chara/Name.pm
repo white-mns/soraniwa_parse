@@ -110,9 +110,11 @@ sub GetNameData{
     my $self  = shift;
     my $div_inner_boardclip_node = shift;
     my $name = "";
- 
-    $name = $div_inner_boardclip_node->as_text;
+
+    my @child_nodes =  $div_inner_boardclip_node->content_list;
+    $name = $child_nodes[0];
     $name =~ s/ENo.\d+　//g;
+    $name =~ s/　$//g;
 
     $self->{AllName}{$self->{ENo}} = [$self->{ENo}, $name];
 
