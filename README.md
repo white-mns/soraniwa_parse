@@ -18,11 +18,6 @@ Perl:5.10.1
 
 bashが使えるLinux環境。（Windowsでやる場合、execute.shの処理を手動で行ってください）  
 perlが使える環境  
-デフォルトで入ってないモジュールを使ってるので、
-
-    cpan DateTime
-
-みたいにCPAN等を使ってDateTimeやHTML::TreeBuilderといった足りないモジュールをインストールしてください。
 
 ## 使い方
 git cloneで作成されたディレクトリの直下に`data/orig`、`data/utf`を作成します。  
