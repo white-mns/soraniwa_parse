@@ -116,7 +116,7 @@ sub GetStatusData{
             $type_name =~ s/】//g;
             
             my @child_nodes = $node->right->content_list;
-            if (scalar(@child_nodes)) {
+            if (scalar(@child_nodes) && $child_nodes[0] =~ /HASH/) {
                 $type_id = $child_nodes[0]->attr("class");
                 $type_id =~ s/type//;
                 $self->{CommonDatas}{TypeName}->SetId($type_id, $type_name);
