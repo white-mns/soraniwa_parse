@@ -9,7 +9,6 @@
 use strict;
 use warnings;
 
-use ConstData;
 use HTML::TreeBuilder;
 use source::lib::GetNode;
 
